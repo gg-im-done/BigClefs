@@ -1,0 +1,31 @@
+#pragma once
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <filesystem>
+#include <format>
+#include <fstream>
+#include <memory>
+#include <numbers>
+#include <numeric>
+#include <optional>
+#include <random>
+#include <ranges>
+#include <string>
+#include <type_traits>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
+
+#include <wx/wx.h>
+
+#include <wx/artprov.h>
+#include <wx/bitmap.h>
+#include <wx/dcbuffer.h>
+#include <wx/event.h>
+#include <wx/image.h>
+#include <wx/spinctrl.h>
+#include <wx/stdpaths.h>
+#include <wx/listctrl.h>

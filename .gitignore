@@ -1,0 +1,5 @@
+Build
+.vs
+x64
+*.vcxproj.user
+.idea

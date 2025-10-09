@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxBigClefs", "wxBigClefs.vcxproj", "{2D90A4AE-FEA8-5BBD-203B-D169121E1263}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D90A4AE-FEA8-5BBD-203B-D169121E1263}.Debug|x64.ActiveCfg = Debug|x64
+		{2D90A4AE-FEA8-5BBD-203B-D169121E1263}.Debug|x64.Build.0 = Debug|x64
+		{2D90A4AE-FEA8-5BBD-203B-D169121E1263}.Release|x64.ActiveCfg = Release|x64
+		{2D90A4AE-FEA8-5BBD-203B-D169121E1263}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = TRUE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = 9E924773-B903-EC1F-7866-893A3ED6B460
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="AnswerDatabase.cpp" />
+    <ClCompile Include="AnswerManager.cpp" />
+    <ClCompile Include="ExcerciseMaker.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="QuestionManager.cpp" />
+    <ClCompile Include="UI\WindowMain.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\WindowSettings.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Main.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="Multimedia\SoundPlayer.cpp">
+      <Filter>Multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="StatMaker.cpp" />
+    <ClCompile Include="Multimedia\MidiPlayer.cpp">
+      <Filter>Multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RTMIDI_DIR)\RtMidi.cpp">
+      <Filter>stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Renderer.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="NoteStatistics.cpp" />
+    <ClCompile Include="UI\WindowStatistics.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ExerciseResult.cpp" />
+    <ClCompile Include="UI\WindowMotivation.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Events.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="DailyStatistics.cpp" />
+    <ClCompile Include="UI\WindowDailyStats.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage\JsonFileStorageProvider.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage\FirebaseDatabaseStorageProvider.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage\BinaryFileStorageProvider.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AnswerDatabase.h" />
+    <ClInclude Include="AnswerManager.h" />
+    <ClInclude Include="ExcerciseMaker.h" />
+    <ClInclude Include="FileManager.h" />
+    <ClInclude Include="QuestionManager.h" />
+    <ClInclude Include="UI\WindowSettings.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\WindowMain.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="Answer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Note.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="NoteRange.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="cute_enums.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Multimedia\SoundPlayer.h">
+      <Filter>Multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="StatMaker.h" />
+    <ClInclude Include="ScoreMaker.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="app_constants.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Multimedia\MidiPlayer.h">
+      <Filter>Multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Renderer.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="dont_touch_me.h">
+      <Filter>stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="NoteStatistics.h" />
+    <ClInclude Include="UI\WindowStatistics.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ExerciseResult.h" />
+    <ClInclude Include="UI\WindowMotivation.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Events.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="DailyStatistics.h" />
+    <ClInclude Include="UI\WindowDailyStats.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\StorageProvider.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\StorageCommon.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\JsonFileStorageProvider.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\FirebaseDatabaseStorageProvider.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\BinaryFileStorageProvider.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="UI">
+      <UniqueIdentifier>{2193d400-86e4-4c7e-bb48-9580f5df183a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stuff">
+      <UniqueIdentifier>{ef88cbae-541a-4135-9fa3-078ff7ce9e71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{939e46ee-577f-4545-a908-cfc6273662f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Multimedia">
+      <UniqueIdentifier>{6f9a7f4c-5b1f-4b7c-8e5d-7a6f3a8d1234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage">
+      <UniqueIdentifier>{48676614-3b2f-4038-a1cf-226c805fc7ab}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
