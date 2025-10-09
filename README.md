@@ -1,5 +1,7 @@
 An over-simplified ~~rip-off~~ veresion of an Android application from Google Play called **Clefs: Music Reading Trainer**.
+
 So, the idea in general isn't mine and I do not claim it.
+
 I just wanted to practice that on Windows. Conveniently.
 
 Features
