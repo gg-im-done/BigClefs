@@ -19,6 +19,6 @@ Tech Info
 - Windows
 - C++20
 - Visual Studio 2022
-- wxWidgets v3.3.1 (configured with $WX_DIR evironment variable in mind)
-- RtMidi ($RTMIDI_DIR)
+- wxWidgets v3.3.1 (located with $WX_DIR evironment variable)
+- RtMidi ($RTMIDI_DIR evironment variable)
 - <windows.h> for .wav
