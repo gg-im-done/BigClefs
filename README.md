@@ -13,6 +13,8 @@ Features
 - Daily play streak indication;
 - MIDI audio feedback (optional).
 
+---
+
 Tech Info
 - Windows
 - C++20
