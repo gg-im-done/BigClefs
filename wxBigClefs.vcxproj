@@ -52,7 +52,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;_DEBUG;__WINDOWS_MM__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp23</LanguageStandard>
-      <AdditionalIncludeDirectories>$(WX_DIR)\include;$(WX_DIR)\include\msvc;$(RTMIDI_DIR);$(ProjectDir);$(NLOHMANN_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WX_DIR)\include;$(WX_DIR)\include\msvc;$(RTMIDI_DIR);$(ProjectDir);$(NLOHMANN_DIR)\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -71,7 +71,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;NDEBUG;__WINDOWS_MM__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp23</LanguageStandard>
-      <AdditionalIncludeDirectories>$(WX_DIR)\include;$(WX_DIR)\include\msvc;$(RTMIDI_DIR);$(ProjectDir);$(NLOHMANN_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WX_DIR)\include;$(WX_DIR)\include\msvc;$(RTMIDI_DIR);$(ProjectDir);$(NLOHMANN_DIR)\include</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
