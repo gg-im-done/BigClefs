@@ -295,7 +295,7 @@ void WindowMain::OnMouseClick(wxMouseEvent& event)
         }
         else
         {
-            //it's here for a reason I guess :\
+            //it's here for a reason I guess ^_^
         }
     }
     else
