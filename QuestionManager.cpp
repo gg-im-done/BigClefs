@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "QuestionManager.h"
-#include "ExcerciseMaker.h"
+#include "ExerciseMaker.h"
 #include "FileManager.h"
 #include "app_constants.h"
 #include "StatMaker.h"

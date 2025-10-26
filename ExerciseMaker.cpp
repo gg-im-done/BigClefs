@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Note.h"
-#include "ExcerciseMaker.h"
+#include "ExerciseMaker.h"
 #include "NoteRange.h"
 
 ExerciseMaker& ExerciseMaker::SetQuestionsCount(unsigned count)

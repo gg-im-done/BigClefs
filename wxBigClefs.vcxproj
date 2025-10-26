@@ -96,7 +96,7 @@
     <ClInclude Include="DailyStatistics.h" />
     <ClInclude Include="cute_enums.h" />
     <ClInclude Include="dont_touch_me.h" />
-    <ClInclude Include="ExcerciseMaker.h" />
+    <ClInclude Include="ExerciseMaker.h" />
     <ClInclude Include="ExerciseResult.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="Multimedia\MidiPlayer.h" />
@@ -129,7 +129,7 @@
     </ClCompile>
     <ClCompile Include="AnswerDatabase.cpp" />
     <ClCompile Include="AnswerManager.cpp" />
-    <ClCompile Include="ExcerciseMaker.cpp" />
+    <ClCompile Include="ExerciseMaker.cpp" />
     <ClCompile Include="ExerciseResult.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="Multimedia\MidiPlayer.cpp" />

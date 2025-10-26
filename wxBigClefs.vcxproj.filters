@@ -3,7 +3,7 @@
   <ItemGroup>
     <ClCompile Include="AnswerDatabase.cpp" />
     <ClCompile Include="AnswerManager.cpp" />
-    <ClCompile Include="ExcerciseMaker.cpp" />
+    <ClCompile Include="ExerciseMaker.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="QuestionManager.cpp" />
     <ClCompile Include="UI\WindowMain.cpp">
@@ -59,7 +59,7 @@
   <ItemGroup>
     <ClInclude Include="AnswerDatabase.h" />
     <ClInclude Include="AnswerManager.h" />
-    <ClInclude Include="ExcerciseMaker.h" />
+    <ClInclude Include="ExerciseMaker.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="QuestionManager.h" />
     <ClInclude Include="UI\WindowSettings.h">

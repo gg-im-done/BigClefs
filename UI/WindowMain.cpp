@@ -452,7 +452,7 @@ std::vector<ExerciseResult> WindowMain::LoadAllExerciseResults() const
     try
     {
         const auto saved_data = FileManager::ReadDatabase();
-        const auto session_data = question_manager.GetAnswerManager()->GetAnswerDatabase();
+        const auto session_data = question_manager.GetAnswerManager()->GetAnswerDatabase();//FXIME ...
         
         std::vector<ExerciseResult> all_results = saved_data->GetArrayRef();
         const auto& session_results = session_data->GetArrayRef();
