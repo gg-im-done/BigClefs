@@ -1,10 +1,18 @@
 #pragma once
 #include "pch.h"
 #include "AnswerManager.h"
+#include "QuestionsView.h"
 
 using NoteIterator = std::vector<Note>::const_iterator;
 
-class QuestionManager
+struct StatusText
+{
+    std::string questions;
+    std::string answers;
+    std::string exercises;
+};
+
+class QuestionManager : public IQuestionsView
 {
     std::vector<Note> v_exercise;
     NoteIterator current_question;
@@ -33,8 +41,12 @@ public:
     [[nodiscard]] bool HasUnsavedExerciseResults() const noexcept { return pAnswerManager->GetSessionsCount() != 0; }
     [[nodiscard]] auto GetCurrentClefType() const noexcept { return IsEnd() ? EClefType::Treble : current_question->GetClef(); }
     [[nodiscard]] auto GetAnswerManager() const noexcept { return pAnswerManager; }
-    /* Tuple: questions, answers, exercises */
-    [[nodiscard]] auto GetStatusText() const -> std::tuple<std::string, std::string, std::string>;
+    [[nodiscard]] StatusText GetStatusText() const;
     [[nodiscard]] auto GetIterators() const noexcept -> std::pair<NoteIterator, NoteIterator>;
+
+    // IQuestionsView
+    EClefType GetCurrentClef() const override { return GetCurrentClefType(); }
+    size_t GetOnScreenQuestionCount() const override;
+    QuestionGlyph GetQuestionAtIndex(size_t index) const override;
 };
 

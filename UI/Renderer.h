@@ -2,8 +2,7 @@
 #include "pch.h"
 #include "app_constants.h"
 #include "cute_enums.h"
-
-class QuestionManager;
+#include "QuestionsView.h"
 
 enum class ENoteFeedback : char { None, Correct, Wrong };
 
@@ -17,7 +16,7 @@ struct RenderingState
     ESpecificNote last_answered_note;
     EClefType last_answered_clef;
     const std::vector<wxPoint>& note_positions;
-    const QuestionManager& question_manager;
+    const IQuestionsView* questions_view;
     std::optional<ESpecificNote> external_hovered_specific_note;
     std::optional<EClefType> external_hovered_clef;
     bool has_user_played_today;
@@ -33,7 +32,7 @@ private:
     void DrawClef(wxDC& drawing_context, const RenderingState& rendering_state) const;
     void DrawStaff(wxDC& drawing_context) const;
     void DrawAnswerCircles(wxDC& drawing_context, const std::vector<wxPoint>& note_positions) const;
-    void DrawQuestions(wxDC& drawing_context, const QuestionManager& question_manager) const;
+    void DrawQuestions(wxDC& drawing_context, const IQuestionsView& questions_view) const;
     void DrawClefChangeMarker(wxDC& drawing_context, int boundary_x, EClefType next_clef) const;
     void DrawNote(wxDC& drawing_context, int x_position, EClefType clef, ESpecificNote note) const;
     void DrawSectionLines(wxDC& drawing_context) const;

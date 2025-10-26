@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "UI/Renderer.h"
-#include "QuestionManager.h"
+#include "QuestionsView.h"
 #include "util.h"
 
 namespace
@@ -23,7 +23,10 @@ void Renderer::RenderMainWindow(wxDC& drawing_context, const RenderingState& ren
     DrawSectionLines(drawing_context);
     if (rendering_state.is_exercise_started)
     {
-        DrawQuestions(drawing_context, rendering_state.question_manager);
+        if (rendering_state.questions_view != nullptr)
+        {
+            DrawQuestions(drawing_context, *rendering_state.questions_view);
+        }
         DrawAnswerFeedback(drawing_context, rendering_state);
     }
     else
@@ -46,7 +49,11 @@ void Renderer::DrawClef(wxDC& drawing_context, const RenderingState& rendering_s
     {
         return;
     }
-    EClefType clef_to_show = rendering_state.is_exercise_started ? rendering_state.question_manager.GetCurrentClefType() : rendering_state.selected_clef;
+    EClefType clef_to_show = rendering_state.selected_clef;
+    if (rendering_state.is_exercise_started && rendering_state.questions_view != nullptr)
+    {
+        clef_to_show = rendering_state.questions_view->GetCurrentClef();
+    }
     if (rendering_state.external_hovered_clef.has_value())
     {
         clef_to_show = rendering_state.external_hovered_clef.value();
@@ -86,15 +93,15 @@ void Renderer::DrawAnswerCircles(wxDC& drawing_context, const std::vector<wxPoin
     }
 }
 
-void Renderer::DrawQuestions(wxDC& drawing_context, const QuestionManager& question_manager) const
+void Renderer::DrawQuestions(wxDC& drawing_context, const IQuestionsView& questions_view) const
 {
-    const auto [current_question, last_question_in_pack] = question_manager.GetIterators();
-    int counter = 0;
-    for (NoteIterator question = current_question; question != last_question_in_pack; ++question, ++counter)
+    const size_t count = questions_view.GetOnScreenQuestionCount();
+    for (size_t index = 0; index < count; ++index)
     {
-        const int ledger_line_start = CURRENT_NOTE_POSITION_X - LEDGER_LINE_WIDTH / 2 + SECTION_WIDTH * counter;
+        const int ledger_line_start = CURRENT_NOTE_POSITION_X - LEDGER_LINE_WIDTH / 2 + SECTION_WIDTH * static_cast<int>(index);
         const int ledger_line_end = ledger_line_start + LEDGER_LINE_WIDTH;
-        auto line = question->GetLedgerLine();
+        auto glyph = questions_view.GetQuestionAtIndex(index);
+        auto line = glyph.ledger_line_count;
         if (line > 0)
         {
             for (int i = 1; i <= line; ++i)
@@ -113,18 +120,16 @@ void Renderer::DrawQuestions(wxDC& drawing_context, const QuestionManager& quest
             }
         }
 
-        const auto specific_note = question->GetSpecificNote();
-        const auto clef = question->GetClef();
-        DrawNote(drawing_context, CURRENT_NOTE_POSITION_X + SECTION_WIDTH * counter, clef, specific_note);
+        const auto specific_note = glyph.specific_note;
+        const auto clef = glyph.clef;
+        DrawNote(drawing_context, CURRENT_NOTE_POSITION_X + SECTION_WIDTH * static_cast<int>(index), clef, specific_note);
 
-        auto next = question;
-        ++next;
-        if (next != last_question_in_pack)
+        if (index + 1 < count)
         {
-            const auto next_clef = next->GetClef();
+            const auto next_clef = questions_view.GetQuestionAtIndex(index + 1).clef;
             if (next_clef != clef)
             {
-                const int boundary_x = LEFT_EDGE_MARGIN_X + SECTION_WIDTH * (2 + counter);
+                const int boundary_x = LEFT_EDGE_MARGIN_X + SECTION_WIDTH * (2 + static_cast<int>(index));
                 DrawClefChangeMarker(drawing_context, boundary_x, next_clef);
             }
         }
@@ -222,13 +227,13 @@ void Renderer::DrawAnswerFeedback(wxDC& drawing_context, const RenderingState& r
     const int y_position = GetNoteYPosition(clef_for_feedback, rendering_state.last_answered_note);
     const auto note_string = ToString(rendering_state.last_answered_note);
 
-    std::random_device random_device;
+    static std::mt19937 random_generator{ std::random_device{}() };
     std::uniform_int_distribution offset_range(-8, 8);
     std::uniform_int_distribution angle_range_x10(-16, 16);
 
-    const auto random_x_offset = offset_range(random_device);
-    const auto random_y_offset = offset_range(random_device);
-    const auto random_angle = static_cast<double>(angle_range_x10(random_device));
+    const auto random_x_offset = offset_range(random_generator);
+    const auto random_y_offset = offset_range(random_generator);
+    const auto random_angle = static_cast<double>(angle_range_x10(random_generator));
 
     switch (rendering_state.last_answered_note_feedback)
     {

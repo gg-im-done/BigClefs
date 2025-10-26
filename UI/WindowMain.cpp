@@ -238,10 +238,10 @@ void WindowMain::FinishExercise()
 
 void WindowMain::UpdateStatusText()
 {
-    const auto [questions_status, answers_status, exercises_status] = question_manager.GetStatusText();
-    SetStatusText(answers_status, STATUSBAR_ID_ANSWERS);
-    SetStatusText(questions_status, STATUSBAR_ID_QUESTIONS);
-    SetStatusText(exercises_status, STATUSBAR_ID_EXERCISES);
+    const StatusText status = question_manager.GetStatusText();
+    SetStatusText(status.answers, STATUSBAR_ID_ANSWERS);
+    SetStatusText(status.questions, STATUSBAR_ID_QUESTIONS);
+    SetStatusText(status.exercises, STATUSBAR_ID_EXERCISES);
 }
 
 void WindowMain::OnPaint(wxPaintEvent&)
@@ -259,7 +259,7 @@ void WindowMain::OnPaint(wxPaintEvent&)
         .last_answered_note = last_answered_note,
         .last_answered_clef = last_answered_clef,
         .note_positions = note_positions,
-        .question_manager = question_manager,
+        .questions_view = &question_manager,
         .external_hovered_specific_note = external_hovered_specific_note,
         .external_hovered_clef = external_hovered_clef,
         .has_user_played_today = has_user_played_today,
@@ -295,6 +295,7 @@ void WindowMain::OnMouseClick(wxMouseEvent& event)
         }
         else
         {
+            //it's here for a reason I guess :\
         }
     }
     else

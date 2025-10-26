@@ -99,13 +99,12 @@ void QuestionManager::ResetAllSessionAnswers()
     pAnswerManager->ResetAllCurrentSessionAnswers();
 }
 
-/* <questions, answers, exercises> */
-auto QuestionManager::GetStatusText() const -> std::tuple<std::string, std::string, std::string>
+StatusText QuestionManager::GetStatusText() const
 {
-    const auto q_str = GetQuestionsStatusText();
-    const auto a_str = GetAnswersStatusText();
-    const auto e_str = GetExercisesStatusText();
-    return std::make_tuple(q_str, a_str, e_str);
+    const auto questions = GetQuestionsStatusText();
+    const auto answers = GetAnswersStatusText();
+    const auto exercises = GetExercisesStatusText();
+    return StatusText{ questions, answers, exercises };
 }
 
 std::string QuestionManager::GetQuestionsStatusText() const
@@ -152,4 +151,25 @@ bool QuestionManager::TakeAnswer(ENote note)
 auto QuestionManager::GetIterators() const noexcept -> std::pair<NoteIterator, NoteIterator>
 {
     return std::make_pair(current_question, last_question_in_pack);
+}
+
+QuestionGlyph QuestionManager::GetQuestionAtIndex(size_t index) const
+{
+    const size_t count = static_cast<size_t>(std::distance(current_question, last_question_in_pack));
+    if (index >= count)
+    {
+        throw std::out_of_range("Question index out of range");
+    }
+    auto it = current_question;
+    std::advance(it, static_cast<long long>(index));
+    return QuestionGlyph{
+        it->GetSpecificNote(),
+        it->GetClef(),
+        it->GetLedgerLine()
+    };
+}
+
+size_t QuestionManager::GetOnScreenQuestionCount() const
+{ 
+    return static_cast<size_t>(std::distance(current_question, last_question_in_pack));
 }
