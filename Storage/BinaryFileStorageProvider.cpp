@@ -78,15 +78,15 @@ std::shared_ptr<AnswersData> BinaryFileStorageProvider::ReadDatabase(const Stora
             break;
         }
 
-        ExerciseResult excercise_result(deserialized_answers, date_time);
-        out_database->AddExcerciseResult(std::move(excercise_result));
+        ExerciseResult exercise_result(deserialized_answers, date_time);
+        out_database->AddExerciseResult(std::move(exercise_result));
     }
     return out_database;
 }
 
 EFileSaveResult BinaryFileStorageProvider::AddNewRecords(const std::shared_ptr<AnswersData>& records, const StorageConfig& config)
 {
-    if (records->GetExcerciseCount() == 0)
+    if (records->GetExerciseCount() == 0)
     {
         return EFileSaveResult::NothingToSave;
     }
@@ -100,12 +100,12 @@ EFileSaveResult BinaryFileStorageProvider::AddNewRecords(const std::shared_ptr<A
     }
 
     decltype(auto) v_new_records = records->GetArrayRef();
-    for (const ExerciseResult& excercise_result : v_new_records)
+    for (const ExerciseResult& exercise_result : v_new_records)
     {
-        const time_t excercise_date = excercise_result.GetDateTime();
-        file_out.write(reinterpret_cast<const char*>(&excercise_date), sizeof(excercise_date));
+        const time_t exercise_date = exercise_result.GetDateTime();
+        file_out.write(reinterpret_cast<const char*>(&exercise_date), sizeof(exercise_date));
 
-        decltype(auto) answers = excercise_result.GetAnswersArrayRef();
+        decltype(auto) answers = exercise_result.GetAnswersArrayRef();
         if (answers.empty())
         {
             throw std::logic_error("Attempting to write 0 answers?");

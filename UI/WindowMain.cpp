@@ -21,8 +21,81 @@ EVT_MOTION(WindowMain::OnMouseMove)
 EVT_KEY_DOWN(WindowMain::OnKeyDown)
 EVT_CLOSE(WindowMain::OnClose)
 //EVT_LEFT_DCLICK(WindowMain::OnMouseClick)
-// NOTE - we are not supporting repeating notes anymore - the event is disabled to prevent missclicks
+// NOTE - we are not supporting repeating notes anymore - the event is disabled to prevent misclicks
 wxEND_EVENT_TABLE()
+
+
+
+namespace
+{
+    constexpr int TOOLBAR_ICON_SIZE = 24;
+
+    enum class EToolBarItem : unsigned char
+    {
+        Stop,
+        Save,
+        Forget,
+        Settings,
+        AllStats,
+        Motivation,
+        DailyStats
+    };
+
+    enum class EToolBarItemState : unsigned char
+    {
+        Enabled,
+        Disabled
+    };
+
+    enum class EToolBarItemType : unsigned char
+    {
+        Tool,
+        Separator
+    };
+
+    struct ToolBarItemConfig
+    {
+        std::optional<wxArtID> art_id;
+        wxString label;
+        wxString short_help;
+        std::optional<wxBitmap> custom_bitmap;
+        std::optional<EToolBarItem> item;
+        EToolBarItemType type;
+        EToolBarItemState initial_state;
+
+        static ToolBarItemConfig CreateWithArt(EToolBarItem item, const wxString& label, const wxArtID& art_id, const wxString& short_help, EToolBarItemState initial_state = EToolBarItemState::Enabled)
+        {
+            return ToolBarItemConfig{ art_id, label, short_help, std::nullopt, item, EToolBarItemType::Tool, initial_state };
+        }
+
+        static ToolBarItemConfig CreateWithBitmap(EToolBarItem item, const wxString& label, const wxBitmap& bitmap, const wxString& short_help, EToolBarItemState initial_state = EToolBarItemState::Enabled)
+        {
+            return ToolBarItemConfig{ std::nullopt, label, short_help, bitmap, item, EToolBarItemType::Tool, initial_state };
+        }
+
+        static ToolBarItemConfig CreateSeparator()
+        {
+            return ToolBarItemConfig{ std::nullopt, "", "", std::nullopt, std::nullopt, EToolBarItemType::Separator, EToolBarItemState::Enabled };
+        }
+    };
+
+    [[nodiscard]] std::vector<ToolBarItemConfig> CreateToolBarConfiguration()
+    {
+        return {
+            ToolBarItemConfig::CreateWithArt(EToolBarItem::Stop, "Stop", wxART_STOP, "Stop current exercise", EToolBarItemState::Disabled),
+            ToolBarItemConfig::CreateSeparator(),
+            ToolBarItemConfig::CreateWithArt(EToolBarItem::Save, "Save", wxART_FILE_SAVE, "Save session results"),
+            ToolBarItemConfig::CreateWithArt(EToolBarItem::Forget, "Forget", wxART_UNDO, "Forget session results"),
+            ToolBarItemConfig::CreateSeparator(),
+            ToolBarItemConfig::CreateWithArt(EToolBarItem::Settings, "Settings", wxART_REPORT_VIEW, "Open settings"),
+            ToolBarItemConfig::CreateSeparator(),
+            ToolBarItemConfig::CreateWithArt(EToolBarItem::AllStats, "All Stats", wxART_INFORMATION, "Show all statistics"),
+            ToolBarItemConfig::CreateWithArt(EToolBarItem::Motivation, "Motivation", wxART_WARNING, "Show motivation window"),
+            ToolBarItemConfig::CreateWithArt(EToolBarItem::DailyStats, "Daily Stats", wxART_LIST_VIEW, "Show daily statistics")
+        };
+    }
+}//namespace
+
 
 
 WindowMain::WindowMain()
@@ -42,8 +115,7 @@ WindowMain::WindowMain()
 
     question_manager.SetOnScreenNoteCount(NOTES_ON_SCREEN);
 
-    stop_excercise_bitmap = wxArtProvider::GetBitmap(wxART_STOP, wxART_MENU);
-    SetupMenuBar();
+    SetupToolBar();
     SetupStatusBar();
     auto settings_callback = [this](unsigned questions_count, EClefType clef, bool is_mixed_clef, unsigned clef_switch_min_notes, unsigned clef_switch_max_notes, bool is_midi_enabled) {
         ApplySettings(questions_count, clef, is_mixed_clef, clef_switch_min_notes, clef_switch_max_notes, is_midi_enabled);
@@ -64,7 +136,7 @@ void WindowMain::SetupStatusBar()
     CreateStatusBar(3, STATUSBAR_STYLE);
     SetStatusText("~answers~info~", STATUSBAR_ID_ANSWERS);
     SetStatusText("~questions~info~", STATUSBAR_ID_QUESTIONS);
-    SetStatusText("~excercises~info~", STATUSBAR_ID_EXCERCISES);
+    SetStatusText("~exercises~info~", STATUSBAR_ID_EXERCISES);
 }
 
 void WindowMain::ApplySettings(unsigned questions_count, EClefType clef, bool is_mixed_clef, unsigned clef_switch_min_notes, unsigned clef_switch_max_notes, bool is_midi_on)
@@ -72,61 +144,71 @@ void WindowMain::ApplySettings(unsigned questions_count, EClefType clef, bool is
     configured_questions_count = questions_count;
     selected_clef = clef;
     is_mixed_clef_enabled = is_mixed_clef;
-    configured_clef_switch_min_notes = clef_switch_min_notes;
-    configured_clef_switch_max_notes = clef_switch_max_notes;
+    if (clef_switch_min_notes <= clef_switch_max_notes)
+    {
+        configured_clef_switch_min_notes = clef_switch_min_notes;
+        configured_clef_switch_max_notes = clef_switch_max_notes;
+    }
+    else
+    {
+        configured_clef_switch_min_notes = clef_switch_max_notes;
+        configured_clef_switch_max_notes = clef_switch_min_notes;
+    }
     is_midi_enabled = is_midi_on;
     Refresh(false);
 }
 
-void WindowMain::SetupMenuBar()
+void WindowMain::SetupToolBar()
 {
-	auto menu_bar = new wxMenuBar();
-    SetMenuBar(menu_bar);
+    constexpr auto TOOLBAR_STYLE = wxTB_HORIZONTAL | wxTB_TEXT | wxTB_FLAT | wxTB_NODIVIDER;
+    toolbar = CreateToolBar(TOOLBAR_STYLE);
+    toolbar->SetToolBitmapSize(wxSize(TOOLBAR_ICON_SIZE, TOOLBAR_ICON_SIZE));
 
-    /* 1. Menu bar - Actions */
-    auto actions_menu = new wxMenu();
-    menu_bar->Append(actions_menu, "Actions");
+    const auto tool_config = CreateToolBarConfiguration();
+    std::unordered_map<EToolBarItem, int> tool_id_map;
+    tool_id_map.reserve(tool_config.size());
+    for (const auto& config : tool_config)
+    {
+        if (config.type == EToolBarItemType::Separator)
+        {
+            toolbar->AddSeparator();
+            continue;
+        }
 
-    const wxBitmap forgetIcon = wxArtProvider::GetBitmap(wxART_UNDO, wxART_MENU);
-    const wxBitmap saveIcon = wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_MENU);
-    const wxBitmap exitIcon = wxArtProvider::GetBitmap(wxART_QUIT, wxART_MENU);
-    const wxBitmap settingsIcon = wxArtProvider::GetBitmap(wxART_REPORT_VIEW, wxART_MENU);
+        wxBitmap icon;
+        if (config.custom_bitmap.has_value() && config.custom_bitmap->IsOk())
+        {
+            icon = *config.custom_bitmap;
+        }
+        else
+        {
+            icon = wxArtProvider::GetBitmap(config.art_id.value(), wxART_TOOLBAR, wxSize(TOOLBAR_ICON_SIZE, TOOLBAR_ICON_SIZE));
+        }
+        
+        const int tool_id = toolbar->AddTool(wxID_ANY, config.label, icon, config.short_help)->GetId();
+        
+        if (config.initial_state == EToolBarItemState::Disabled)
+        {
+            toolbar->EnableTool(tool_id, false);
+        }
 
-    stop_excercise_menu_item = actions_menu->Append(wxID_ANY, "Stop excercise");
-    DisableStopExcercise();
-    actions_menu->AppendSeparator();
-    auto save_menu_item = actions_menu->Append(wxID_ANY, "Save session");
-    save_menu_item->SetBitmap(saveIcon);
-    auto forget_menu_item = actions_menu->Append(wxID_ANY, "Forget session");
-    forget_menu_item->SetBitmap(forgetIcon);
-    actions_menu->AppendSeparator();
-    auto settings_menu_item = actions_menu->Append(wxID_ANY, "Settings...");
-    settings_menu_item->SetBitmap(settingsIcon);
-    actions_menu->AppendSeparator();
-    auto exit_menu_item = actions_menu->Append(wxID_EXIT, "Exit");
-    exit_menu_item->SetBitmap(exitIcon);
+        tool_id_map[config.item.value()] = tool_id;
+    }
 
-    settings_menu_item->Enable(true);
+    toolbar->Realize();
 
-    Bind(wxEVT_MENU, &WindowMain::OnMenuAbortExcercise, this, stop_excercise_menu_item->GetId());
-	Bind(wxEVT_MENU, &WindowMain::OnMenuSettings, this, settings_menu_item->GetId());
-	Bind(wxEVT_MENU, &WindowMain::OnMenuExit, this, wxID_EXIT);
-    Bind(wxEVT_MENU, &WindowMain::OnMenuSaveSession, this, save_menu_item->GetId());
-    Bind(wxEVT_MENU, &WindowMain::OnMenuForgetSession, this, forget_menu_item->GetId());
+    stop_exercise_tool_id = tool_id_map[EToolBarItem::Stop];
 
-    /* 2. Menu bar - Data */
-    auto data_menu = new wxMenu();
-    menu_bar->Append(data_menu, "Data");
-
-    auto all_stats_menu_item = data_menu->Append(wxID_ANY, "Show All Stats");
-    Bind(wxEVT_MENU, &WindowMain::OnMenuShowAllStats, this, all_stats_menu_item->GetId());
-    auto motivation_menu_item = data_menu->Append(wxID_ANY, "Show Worst Notes");
-    Bind(wxEVT_MENU, &WindowMain::OnMenuShowMotivation, this, motivation_menu_item->GetId());
-    auto daily_stats_menu_item = data_menu->Append(wxID_ANY, "Show Daily Stats");
-    Bind(wxEVT_MENU, &WindowMain::OnMenuShowDailyStats, this, daily_stats_menu_item->GetId());
+    Bind(wxEVT_TOOL, &WindowMain::OnToolAbortExercise, this, tool_id_map[EToolBarItem::Stop]);
+    Bind(wxEVT_TOOL, &WindowMain::OnToolSaveSession, this, tool_id_map[EToolBarItem::Save]);
+    Bind(wxEVT_TOOL, &WindowMain::OnToolForgetSession, this, tool_id_map[EToolBarItem::Forget]);
+    Bind(wxEVT_TOOL, &WindowMain::OnToolSettings, this, tool_id_map[EToolBarItem::Settings]);
+    Bind(wxEVT_TOOL, &WindowMain::OnToolShowAllStats, this, tool_id_map[EToolBarItem::AllStats]);
+    Bind(wxEVT_TOOL, &WindowMain::OnToolShowMotivation, this, tool_id_map[EToolBarItem::Motivation]);
+    Bind(wxEVT_TOOL, &WindowMain::OnToolShowDailyStats, this, tool_id_map[EToolBarItem::DailyStats]);
 }
 
-void WindowMain::StartExcercise()
+void WindowMain::StartExercise()
 {
     is_started = true;
     const auto questions_count = configured_questions_count;
@@ -140,11 +222,11 @@ void WindowMain::StartExcercise()
     }
 }
 
-void WindowMain::FinishExcercise()
+void WindowMain::FinishExercise()
 {
     is_started = false;
-    is_last_answered_note_correct = NoteFeedback::None;
-    DisableStopExcercise();
+    is_last_answered_note_correct = ENoteFeedback::None;
+    SetStopExerciseEnabled(false);
 
     const auto average_ms = question_manager.GetAverageAnswerTime();
     const auto average_seconds = float(average_ms.count()) / MILLISECONDS_TO_SECONDS_FACTOR;
@@ -156,10 +238,10 @@ void WindowMain::FinishExcercise()
 
 void WindowMain::UpdateStatusText()
 {
-    const auto [questions_status, answers_status, excercises_status] = question_manager.GetStatusText();
+    const auto [questions_status, answers_status, exercises_status] = question_manager.GetStatusText();
     SetStatusText(answers_status, STATUSBAR_ID_ANSWERS);
     SetStatusText(questions_status, STATUSBAR_ID_QUESTIONS);
-    SetStatusText(excercises_status, STATUSBAR_ID_EXCERCISES);
+    SetStatusText(exercises_status, STATUSBAR_ID_EXERCISES);
 }
 
 void WindowMain::OnPaint(wxPaintEvent&)
@@ -169,7 +251,7 @@ void WindowMain::OnPaint(wxPaintEvent&)
     const std::optional<ESpecificNote> external_hovered_specific_note = hovered_from_motivation.has_value() ? std::optional<ESpecificNote>(hovered_from_motivation->GetSpecificNote()) : std::nullopt;
     const std::optional<EClefType> external_hovered_clef = hovered_from_motivation.has_value() ? std::optional<EClefType>(hovered_from_motivation->GetClef()) : std::nullopt;
     const RenderingState rendering_state{
-        .is_excercise_started = is_started,
+        .is_exercise_started = is_started,
         .is_start_button_hovered = is_start_button_hovered,
         .selected_clef = selected_clef,
         .is_mixed_clef_enabled = is_mixed_clef_enabled,
@@ -206,21 +288,19 @@ void WindowMain::OnMouseClick(wxMouseEvent& event)
     const auto current_clef = question_manager.GetCurrentClefType();
     if (question_manager.TakeAnswer(clicked_note.value()))
     {
-        is_last_answered_note_correct = NoteFeedback::Correct;
+        is_last_answered_note_correct = ENoteFeedback::Correct;
         if (specific_note.has_value() && is_midi_enabled)
         {
             MidiPlayer::Play(specific_note.value());
         }
         else
         {
-            //SHULD NOT BE POSSIBLE
-            //std::unreachable()
         }
     }
     else
     {
         SoundPlayer::PlayNoteClickSound();
-        is_last_answered_note_correct = NoteFeedback::Wrong;
+        is_last_answered_note_correct = ENoteFeedback::Wrong;
     }
     last_answered_clef = current_clef;
     last_answered_note = specific_note.value_or(ESpecificNote::NOTE_C_0);
@@ -228,19 +308,17 @@ void WindowMain::OnMouseClick(wxMouseEvent& event)
     UpdateStatusText();
     Refresh();
     if (question_manager.IsEnd())
-        FinishExcercise();
+        FinishExercise();
 }
 
 void WindowMain::OnMouseRightClick(wxMouseEvent&)
 {
-    wxCommandEvent whatever(wxEVT_MENU);
-    OnMenuAbortExcercise(whatever);
+    wxCommandEvent whatever(wxEVT_TOOL);
+    OnToolAbortExercise(whatever);
 }
 
 void WindowMain::OnMouseMove(wxMouseEvent& event)
 {
-    hovered_note = GetNoteAtPoint(event.GetPosition());
-
     if (is_started)
         return;
 
@@ -262,34 +340,29 @@ void WindowMain::OnMouseMove(wxMouseEvent& event)
     }
 }
 
-void WindowMain::OnMenuSettings(wxCommandEvent&)
+void WindowMain::OnToolSettings(wxCommandEvent&)
 {
     settings_window->Show();
     settings_window->Raise();
 }
 
-void WindowMain::OnMenuExit(wxCommandEvent&)
-{
-    Close();
-}
-
-void WindowMain::OnMenuAbortExcercise(wxCommandEvent&)
+void WindowMain::OnToolAbortExercise(wxCommandEvent&)
 {
     if (!is_started)
         return;
     SoundPlayer::PlayAbandonSound();
     is_started = false;
-    is_last_answered_note_correct = NoteFeedback::None;
-    question_manager.AbortExcercise();
+    is_last_answered_note_correct = ENoteFeedback::None;
+    question_manager.AbortExercise();
     UpdateStatusText();
     UpdateDailyPlayStatus();
-    DisableStopExcercise();
+    SetStopExerciseEnabled(false);
     Refresh();
 }
 
-void WindowMain::OnMenuSaveSession(wxCommandEvent&)
+void WindowMain::OnToolSaveSession(wxCommandEvent&)
 {
-    const EFileSaveResult result = question_manager.SaveExcerciseStats();
+    const EFileSaveResult result = question_manager.SaveExerciseStats();
     switch (result)
     {
     case EFileSaveResult::NothingToSave:
@@ -300,24 +373,21 @@ void WindowMain::OnMenuSaveSession(wxCommandEvent&)
     case EFileSaveResult::CannotCreateFile:
         wxMessageBox("Error opening data file", "Error", wxOK | wxICON_ERROR);
         break;
-    default:
-        wxMessageBox("OnMenuSaveSession: file save result unknown", "Internal Error", wxOK | wxICON_ERROR);
-        break;
     }
     UpdateStatusText();
     UpdateDailyPlayStatus();
     Refresh();
 }
 
-void WindowMain::OnMenuForgetSession(wxCommandEvent&)
+void WindowMain::OnToolForgetSession(wxCommandEvent&)
 {
-    const auto excerciseCount = question_manager.GetAnswerManager()->GetAnswerDatabase()->GetExcerciseCount();
-    if (excerciseCount == 0)
+    const auto exerciseCount = question_manager.GetAnswerManager()->GetAnswerDatabase()->GetExerciseCount();
+    if (exerciseCount == 0)
     {
         return;
     }
     
-    const int res = wxMessageBox(std::format("Forget {} excercise results?", excerciseCount), "Confirm", wxYES_NO | wxICON_QUESTION, this);
+    const int res = wxMessageBox(std::format("Forget {} exercise results?", exerciseCount), "Confirm", wxYES_NO | wxICON_QUESTION, this);
     if (res != wxYES)
     {
         return;
@@ -329,7 +399,7 @@ void WindowMain::OnMenuForgetSession(wxCommandEvent&)
     Refresh();
 }
 
-void WindowMain::OnMenuShowAllStats(wxCommandEvent&)
+void WindowMain::OnToolShowAllStats(wxCommandEvent&)
 {
     const auto all_results = LoadAllExerciseResults();
     if (all_results.empty())
@@ -342,7 +412,7 @@ void WindowMain::OnMenuShowAllStats(wxCommandEvent&)
     CreateAndShowStatisticsWindow(treble_stats, bass_stats);
 }
 
-void WindowMain::OnMenuShowMotivation(wxCommandEvent&)
+void WindowMain::OnToolShowMotivation(wxCommandEvent&)
 {
     if (WindowMotivation::IsOpen())
     {
@@ -354,7 +424,7 @@ void WindowMain::OnMenuShowMotivation(wxCommandEvent&)
     splash->Show();
 }
 
-void WindowMain::OnMenuShowDailyStats(wxCommandEvent&)
+void WindowMain::OnToolShowDailyStats(wxCommandEvent&)
 {
     const auto all_results = LoadAllExerciseResults();
     if (all_results.empty())
@@ -425,16 +495,16 @@ void WindowMain::OnKeyDown(wxKeyEvent& event)
     }
     else if (event.GetKeyCode() == WXK_ESCAPE)
     {
-        wxCommandEvent whavever(wxEVT_MENU);
-        OnMenuAbortExcercise(whavever);
+        wxCommandEvent whavever(wxEVT_TOOL);
+        OnToolAbortExercise(whavever);
     }
 }
 
 void WindowMain::OnStartButtonClicked()
 {
-    SoundPlayer::PlayExcerciseStartSound();
-    EnableStopExcercise();
-    StartExcercise();
+    SoundPlayer::PlayExerciseStartSound();
+    SetStopExerciseEnabled(true);
+    StartExercise();
     UpdateStatusText();
     UpdateDailyPlayStatus();
     Refresh();
@@ -442,7 +512,7 @@ void WindowMain::OnStartButtonClicked()
 
 void WindowMain::OnClose(wxCloseEvent& event)
 {
-    if (question_manager.HasUnsavedExcerciseResults())
+    if (question_manager.HasUnsavedExerciseResults())
     {
         const int response = wxMessageBox(
             "You have unsaved results, do you wish to save them?",
@@ -452,8 +522,8 @@ void WindowMain::OnClose(wxCloseEvent& event)
 
         if (response == wxYES)
         {
-            wxCommandEvent whatever(wxEVT_MENU);
-            OnMenuSaveSession(whatever);
+            wxCommandEvent whatever(wxEVT_TOOL);
+            OnToolSaveSession(whatever);
         }
     }
     event.Skip();
@@ -502,16 +572,9 @@ void WindowMain::UpdateDailyPlayStatus()
     }
 }
 
-void WindowMain::EnableStopExcercise()
+void WindowMain::SetStopExerciseEnabled(bool enabled)
 {
-    stop_excercise_menu_item->SetBitmap(stop_excercise_bitmap);
-    stop_excercise_menu_item->Enable(true);
-}
-
-void WindowMain::DisableStopExcercise()
-{
-    stop_excercise_menu_item->SetBitmap(wxNullBitmap);
-    stop_excercise_menu_item->Enable(false);
+    toolbar->EnableTool(stop_exercise_tool_id, enabled);
 }
 
 std::optional<ENote> WindowMain::GetNoteAtPoint(wxPoint position) const noexcept

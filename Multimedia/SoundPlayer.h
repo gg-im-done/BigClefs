@@ -5,7 +5,7 @@ class SoundPlayer
 	~SoundPlayer() = delete;
 public:
 	static void WarmUpSoundPlayer();
-	static void PlayExcerciseStartSound();
+	static void PlayExerciseStartSound();
 	static void PlaySelectClefSound();
 	static void PlayNoteClickSound();
 	static void PlayAbandonSound();

@@ -13,14 +13,14 @@ class AnswerManager
 public:
 	AnswerManager() noexcept;
 	void ClearSession() noexcept;
-	void InitExcerciseSession() noexcept;
-	void ShutdownExcerciseSession();
+	void InitExerciseSession() noexcept;
+	void ShutdownExerciseSession();
 	void ResetAllCurrentSessionAnswers();
 	void AddNewAnswer(std::vector<Note>::const_iterator note_iter, bool is_correct) noexcept;
 	[[nodiscard]] EFileSaveResult DumpAnswerDatabaseIntoFile();
 	[[nodiscard]] std::chrono::milliseconds GetAverageAnswerTime() const noexcept;
 	[[nodiscard]] auto GetCount() const noexcept { return answers.size(); }
-	[[nodiscard]] auto GetSessionsCount() const noexcept { return pAnswerDatabase->GetExcerciseCount(); }
+	[[nodiscard]] auto GetSessionsCount() const noexcept { return pAnswerDatabase->GetExerciseCount(); }
 	[[nodiscard]] auto GetAnswerDatabase() const noexcept { return pAnswerDatabase; }
 	[[nodiscard]] std::string GetAnswerStatusText() const noexcept;
 	

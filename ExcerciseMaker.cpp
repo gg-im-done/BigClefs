@@ -3,47 +3,47 @@
 #include "ExcerciseMaker.h"
 #include "NoteRange.h"
 
-ExcerciseMaker& ExcerciseMaker::SetQuestionsCount(unsigned count)
+ExerciseMaker& ExerciseMaker::SetQuestionsCount(unsigned count)
 {
     questions_count = count;
     return *this;
 }
 
-ExcerciseMaker& ExcerciseMaker::SetMinSwitchFreqency(unsigned freq_min)
+ExerciseMaker& ExerciseMaker::SetMinSwitchFreqency(unsigned freq_min)
 {
     clef_switch_frequency_min = freq_min;
     return *this;
 }
 
-ExcerciseMaker& ExcerciseMaker::SetMaxSwitchFreqency(unsigned freq_max)
+ExerciseMaker& ExerciseMaker::SetMaxSwitchFreqency(unsigned freq_max)
 {
     clef_switch_frequency_max = freq_max;
     return *this;
 }
 
-ExcerciseMaker& ExcerciseMaker::SetLedgerLines(unsigned ledger_lines_used)
+ExerciseMaker& ExerciseMaker::SetLedgerLines(unsigned ledger_lines_used)
 {
     ledger_lines = ledger_lines_used;
     return *this;
 }
 
-ExcerciseMaker& ExcerciseMaker::SetClef(EClefType clef)
+ExerciseMaker& ExerciseMaker::SetClef(EClefType clef)
 {
     clef_type = clef;
     return *this;
 }
 
-ExcerciseMaker& ExcerciseMaker::WithRepeatingNotes(bool is_repeating_notes_allowed)
+ExerciseMaker& ExerciseMaker::WithRepeatingNotes(bool is_repeating_notes_allowed)
 {
     allow_repeating_notes = is_repeating_notes_allowed;
     return *this;
 }
 
 
-std::vector<Note> ExcerciseMaker::GenerateExcerciseOneClef(EClefType clef) const
+std::vector<Note> ExerciseMaker::GenerateExerciseOneClef(EClefType clef) const
 {
-    std::vector<Note> excercise;
-    excercise.reserve(questions_count);
+    std::vector<Note> exercise;
+    exercise.reserve(questions_count);
     std::random_device generator;
 
     const NoteRange note_range(ledger_lines, clef);
@@ -56,36 +56,36 @@ std::vector<Note> ExcerciseMaker::GenerateExcerciseOneClef(EClefType clef) const
         for (unsigned i = 0; i < questions_count; i++)
         {
             const auto specific_note = static_cast<ESpecificNote>(rand_range(generator));
-            excercise.emplace_back(specific_note, clef);
+            exercise.emplace_back(specific_note, clef);
         }
     }
     else
     {
         const auto first_note = static_cast<ESpecificNote>(rand_range(generator));
-        excercise.emplace_back(first_note, clef);
+        exercise.emplace_back(first_note, clef);
         for (unsigned i = 1; i < questions_count; i++)
         {
             ESpecificNote specific_note;
             do
             {
                 specific_note = static_cast<ESpecificNote>(rand_range(generator));
-            } while (specific_note == excercise.back().GetSpecificNote());
-            excercise.emplace_back(specific_note, clef);
+            } while (specific_note == exercise.back().GetSpecificNote());
+            exercise.emplace_back(specific_note, clef);
         }
     }
-    return excercise;
+    return exercise;
 }
 
-std::vector<Note> ExcerciseMaker::Generate() const
+std::vector<Note> ExerciseMaker::Generate() const
 {
     if (clef_type.has_value())
     {
-        return GenerateExcerciseOneClef(clef_type.value());
+        return GenerateExerciseOneClef(clef_type.value());
     }
     else // Mixed-clef mode
     {
-        std::vector<Note> excercise;
-        excercise.reserve(questions_count);
+        std::vector<Note> exercise;
+        exercise.reserve(questions_count);
 
         std::random_device generator;
         std::uniform_int_distribution streak_dist(clef_switch_frequency_min, clef_switch_frequency_max);
@@ -118,10 +118,10 @@ std::vector<Note> ExcerciseMaker::Generate() const
                     do
                     {
                         specific_note = static_cast<ESpecificNote>(note_dist(generator));
-                    } while (!excercise.empty() && specific_note == last_specific_note);
+                    } while (!exercise.empty() && specific_note == last_specific_note);
                 }
 
-                excercise.emplace_back(specific_note, current_clef);
+                exercise.emplace_back(specific_note, current_clef);
                 last_specific_note = specific_note;
             }
 
@@ -129,7 +129,7 @@ std::vector<Note> ExcerciseMaker::Generate() const
             current_clef = (current_clef == EClefType::Treble) ? EClefType::Bass : EClefType::Treble;
         }
 
-        return excercise;
+        return exercise;
     }
 
 }

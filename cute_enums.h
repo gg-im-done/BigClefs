@@ -24,7 +24,7 @@ enum StatusBarIndex : int
 {
     STATUSBAR_ID_ANSWERS = 0,
     STATUSBAR_ID_QUESTIONS = 1,
-    STATUSBAR_ID_EXCERCISES = 2
+    STATUSBAR_ID_EXERCISES = 2
 };
 
 enum ESpecificNote : int8

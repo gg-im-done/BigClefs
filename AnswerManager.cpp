@@ -27,20 +27,20 @@ void AnswerManager::ClearSession() noexcept
 	wrong_count = 0;
 }
 
-void AnswerManager::InitExcerciseSession() noexcept
+void AnswerManager::InitExerciseSession() noexcept
 {
 	ClearSession();
 	question_start_time = std::chrono::system_clock::now();
 }
 
-void AnswerManager::ShutdownExcerciseSession()
+void AnswerManager::ShutdownExerciseSession()
 {
 	if (answers.empty())
 	{
-		throw std::logic_error("Trying to add an empty excercise result");
+		throw std::logic_error("Trying to add an empty exercise result");
 	}
 	ExerciseResult result(answers);
-	pAnswerDatabase->AddExcerciseResult(result);
+	pAnswerDatabase->AddExerciseResult(result);
 }
 
 void AnswerManager::AddNewAnswer(std::vector<Note>::const_iterator note_iter, bool is_correct) noexcept
@@ -77,7 +77,7 @@ std::string AnswerManager::GetAnswerStatusText() const noexcept
 
 EFileSaveResult AnswerManager::DumpAnswerDatabaseIntoFile()
 {
-	if (pAnswerDatabase->GetExcerciseCount() == 0)
+	if (pAnswerDatabase->GetExerciseCount() == 0)
 		return EFileSaveResult::NothingToSave;
 	const auto res1 = FileManager::AddNewRecords(pAnswerDatabase);
 	[[maybe_unused]] const auto res2 = FileManager::AddNewRecords(pAnswerDatabase, ELocation::WindowsTempFolder);

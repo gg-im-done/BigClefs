@@ -8,7 +8,7 @@
 
 namespace
 {
-    size_t g_excercises_saved = 0;
+    size_t g_exercises_saved = 0;
 
 #if defined(USE_JSON_STORAGE)
     constexpr EStorageBackend DEFAULT_BACKEND = EStorageBackend::JsonFile;
@@ -73,14 +73,14 @@ EFileSaveResult FileManager::AddNewRecords(
     const auto result = provider->AddNewRecords(new_records, config);
     if (result == EFileSaveResult::Success && directory == ELocation::ApplicationFolder)
     {
-        g_excercises_saved += new_records->GetExcerciseCount();
+        g_exercises_saved += new_records->GetExerciseCount();
     }
     return result;
 }
 
-size_t FileManager::GetSavedExcercisesCount() noexcept
+size_t FileManager::GetSavedExercisesCount() noexcept
 {
-    return g_excercises_saved;
+    return g_exercises_saved;
 }
 
 void FileManager::SetStorageBackend(EStorageBackend backend) noexcept

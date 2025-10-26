@@ -94,7 +94,7 @@ std::shared_ptr<AnswersData> JsonFileStorageProvider::ReadDatabase(const Storage
                 answers.emplace_back(DeserializeAnswer(a));
             }
             ExerciseResult exercise_result(answers, date_time);
-            out_database->AddExcerciseResult(std::move(exercise_result));
+            out_database->AddExerciseResult(std::move(exercise_result));
         }
     }
     catch (...)
@@ -107,7 +107,7 @@ std::shared_ptr<AnswersData> JsonFileStorageProvider::ReadDatabase(const Storage
 
 EFileSaveResult JsonFileStorageProvider::AddNewRecords(const std::shared_ptr<AnswersData>& records, const StorageConfig& config)
 {
-    if (!records || records->GetExcerciseCount() == 0)
+    if (!records || records->GetExerciseCount() == 0)
     {
         return EFileSaveResult::NothingToSave;
     }

@@ -9,7 +9,7 @@ std::shared_ptr<AnswersData> FirebaseDatabaseStorageProvider::ReadDatabase(const
 
 EFileSaveResult FirebaseDatabaseStorageProvider::AddNewRecords(const std::shared_ptr<AnswersData>& records, const StorageConfig&)
 {
-    if (!records || records->GetExcerciseCount() == 0)
+    if (!records || records->GetExerciseCount() == 0)
     {
         return EFileSaveResult::NothingToSave;
     }

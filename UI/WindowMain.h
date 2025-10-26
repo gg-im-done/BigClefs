@@ -10,11 +10,11 @@ class WindowSettings;
 
 class WindowMain : public wxFrame
 {
-    NoteFeedback is_last_answered_note_correct{ NoteFeedback::None };
+    ENoteFeedback is_last_answered_note_correct{ ENoteFeedback::None };
 public:
     WindowMain();
     void SetupStatusBar();
-    void SetupMenuBar();
+    void SetupToolBar();
     void ApplySettings(unsigned questions_count, EClefType clef, bool is_mixed_clef, unsigned clef_switch_min_notes, unsigned clef_switch_max_notes, bool is_midi_enabled);
 private:
     unsigned configured_questions_count{ DEFAULT_QUESTIONS_COUNT };
@@ -27,7 +27,6 @@ private:
     QuestionManager question_manager;
     bool is_started{ false };
     bool is_start_button_hovered{ false };
-    std::optional<ENote> hovered_note;
     EClefType selected_clef{ EClefType::Treble };
     bool is_mixed_clef_enabled{ DEFAULT_MIXED_CLEF_ENABLED };
     bool is_midi_enabled{ DEFAULT_MIDI_ENABLED };
@@ -38,8 +37,8 @@ private:
     bool has_user_played_today{ false };
     unsigned streak_days_if_practice_today{ 1 };
 private:
-    void StartExcercise();
-    void FinishExcercise();
+    void StartExercise();
+    void FinishExercise();
     void UpdateStatusText();
     void UpdateDailyPlayStatus();
 private:
@@ -47,14 +46,13 @@ private:
     void OnMouseClick(wxMouseEvent&);
     void OnMouseRightClick(wxMouseEvent&);
     void OnMouseMove(wxMouseEvent&);
-    void OnMenuSettings(wxCommandEvent&);
-    void OnMenuExit(wxCommandEvent&);
-    void OnMenuAbortExcercise(wxCommandEvent&);
-    void OnMenuSaveSession(wxCommandEvent&);
-    void OnMenuForgetSession(wxCommandEvent&);
-    void OnMenuShowAllStats(wxCommandEvent&);
-    void OnMenuShowMotivation(wxCommandEvent&);
-    void OnMenuShowDailyStats(wxCommandEvent&);
+    void OnToolSettings(wxCommandEvent&);
+    void OnToolAbortExercise(wxCommandEvent&);
+    void OnToolSaveSession(wxCommandEvent&);
+    void OnToolForgetSession(wxCommandEvent&);
+    void OnToolShowAllStats(wxCommandEvent&);
+    void OnToolShowMotivation(wxCommandEvent&);
+    void OnToolShowDailyStats(wxCommandEvent&);
     void OnMotivationHoverChanged(wxCommandEvent&);
 private:
     [[nodiscard]] std::vector<ExerciseResult> LoadAllExerciseResults() const;
@@ -67,10 +65,9 @@ private:
 private:
     enum ClickResult : unsigned { NOT_CLICKED_ON_NOTE = 69 };
 private:
-    wxMenuItem* stop_excercise_menu_item{ nullptr };
-    wxBitmap stop_excercise_bitmap;
-    void EnableStopExcercise();
-    void DisableStopExcercise();
+    wxToolBar* toolbar{ nullptr };
+    int stop_exercise_tool_id{ wxID_NONE };
+    void SetStopExerciseEnabled(bool enabled);
 
     [[nodiscard]] std::optional<ENote> GetNoteAtPoint(wxPoint position) const noexcept;
 

@@ -21,7 +21,7 @@ void Renderer::RenderMainWindow(wxDC& drawing_context, const RenderingState& ren
     DrawStaff(drawing_context);
     DrawAnswerCircles(drawing_context, rendering_state.note_positions);
     DrawSectionLines(drawing_context);
-    if (rendering_state.is_excercise_started)
+    if (rendering_state.is_exercise_started)
     {
         DrawQuestions(drawing_context, rendering_state.question_manager);
         DrawAnswerFeedback(drawing_context, rendering_state);
@@ -42,11 +42,11 @@ void Renderer::DrawClef(wxDC& drawing_context, const RenderingState& rendering_s
     static constexpr wxCoord CLEF_TEXT_Y = FIRST_LINE_START_POSITION_Y + STAFF_LINE_SPACING * 4;
 
     drawing_context.SetFont(CLEF_LABEL_FONT);
-    if (!rendering_state.is_excercise_started && rendering_state.is_mixed_clef_enabled && !rendering_state.external_hovered_clef.has_value())
+    if (!rendering_state.is_exercise_started && rendering_state.is_mixed_clef_enabled && !rendering_state.external_hovered_clef.has_value())
     {
         return;
     }
-    EClefType clef_to_show = rendering_state.is_excercise_started ? rendering_state.question_manager.GetCurrentClefType() : rendering_state.selected_clef;
+    EClefType clef_to_show = rendering_state.is_exercise_started ? rendering_state.question_manager.GetCurrentClefType() : rendering_state.selected_clef;
     if (rendering_state.external_hovered_clef.has_value())
     {
         clef_to_show = rendering_state.external_hovered_clef.value();
@@ -232,11 +232,11 @@ void Renderer::DrawAnswerFeedback(wxDC& drawing_context, const RenderingState& r
 
     switch (rendering_state.last_answered_note_feedback)
     {
-    case NoteFeedback::None:
+    case ENoteFeedback::None:
         drawing_context.SetFont(FEEDBACK_TEXT_FONT);
         drawing_context.DrawText(L"Go!!", FEEDBACK_X_POS - 20, FEEDBACK_Y_POS + 20);
         break;
-    case NoteFeedback::Correct:
+    case ENoteFeedback::Correct:
         drawing_context.SetFont(FEEDBACK_TEXT_FONT);
         drawing_context.SetTextForeground(FEEDBACK_GREEN);
         drawing_context.DrawRotatedText(
@@ -248,7 +248,7 @@ void Renderer::DrawAnswerFeedback(wxDC& drawing_context, const RenderingState& r
         drawing_context.SetBrush(*wxGREEN_BRUSH);
         drawing_context.DrawCircle(wxPoint(FEEDBACK_DOT_X, y_position), NOTE_DOT_RADIUS);
         break;
-    case NoteFeedback::Wrong:
+    case ENoteFeedback::Wrong:
         drawing_context.SetFont(FEEDBACK_NOTE_FONT);
         drawing_context.SetTextForeground(FEEDBACK_RED);
         drawing_context.DrawRotatedText(

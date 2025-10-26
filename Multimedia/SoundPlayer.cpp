@@ -42,7 +42,7 @@ namespace
     }
 }
 
-void SoundPlayer::PlayExcerciseStartSound()
+void SoundPlayer::PlayExerciseStartSound()
 {
     PlayIfExists(L"start_click.wav");
 }

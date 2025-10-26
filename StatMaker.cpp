@@ -40,10 +40,10 @@ bool StatMaker::Init()
 
 	std::unordered_map<Note, NoteStatTmp> note_stats;
 
-	decltype(auto) excercise_results = pAnswerDatabase->GetArrayRef();
-	for (const auto& excercise_result : excercise_results)
+	decltype(auto) exercise_results = pAnswerDatabase->GetArrayRef();
+	for (const auto& exercise_result : exercise_results)
 	{
-		decltype(auto) answers = excercise_result.GetAnswersArrayRef();
+		decltype(auto) answers = exercise_result.GetAnswersArrayRef();
 		for (const auto& answer : answers)
 		{
 			note_stats[answer.GetNote()].count++;

@@ -9,10 +9,10 @@ public:
 	AnswersData() = default;
 	~AnswersData() noexcept;
 public:
-	void AddExcerciseResult(const ExerciseResult& excercise_result);
-	void AddExcerciseResult(ExerciseResult&& excercise_result);
+	void AddExerciseResult(const ExerciseResult& exercise_result);
+	void AddExerciseResult(ExerciseResult&& exercise_result);
 	[[nodiscard]] const auto& GetArrayRef() const noexcept { return v_exercise_results; }
-	[[nodiscard]] auto GetExcerciseCount() const noexcept { return v_exercise_results.size(); }
+	[[nodiscard]] auto GetExerciseCount() const noexcept { return v_exercise_results.size(); }
 private:
 	AnswersData(const AnswersData&) = delete;
 	AnswersData(AnswersData&&) = delete;

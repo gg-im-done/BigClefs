@@ -5,15 +5,15 @@
 
 class QuestionManager;
 
-enum class NoteFeedback : char { None, Correct, Wrong };
+enum class ENoteFeedback : char { None, Correct, Wrong };
 
 struct RenderingState
 {
-    bool is_excercise_started;
+    bool is_exercise_started;
     bool is_start_button_hovered;
     EClefType selected_clef;
     bool is_mixed_clef_enabled;
-    NoteFeedback last_answered_note_feedback = NoteFeedback::None;
+    ENoteFeedback last_answered_note_feedback = ENoteFeedback::None;
     ESpecificNote last_answered_note;
     EClefType last_answered_clef;
     const std::vector<wxPoint>& note_positions;
