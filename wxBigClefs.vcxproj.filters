@@ -137,6 +137,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="res.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <Filter Include="UI">
       <UniqueIdentifier>{2193d400-86e4-4c7e-bb48-9580f5df183a}</UniqueIdentifier>
     </Filter>

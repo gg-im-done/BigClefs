@@ -12,7 +12,7 @@ struct RenderingState
     bool is_start_button_hovered;
     EClefType selected_clef;
     bool is_mixed_clef_enabled;
-    ENoteFeedback last_answered_note_feedback = ENoteFeedback::None;
+    ENoteFeedback last_answered_note_feedback;
     ESpecificNote last_answered_note;
     EClefType last_answered_clef;
     const std::vector<wxPoint>& note_positions;
